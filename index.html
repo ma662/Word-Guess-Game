@@ -8,15 +8,96 @@
 
     <!-- FOR LATER -->
     <!-- <script src="assets/javascript/game.js"></script> -->
-    <script type="text/javascript">
-    // make game object
-    
-    
-    
-    </script>
 
 </head>
     <body>
-        test
+    <script type="text/javascript">
+
+    // make game object
+    var game = {
+    //========================================
+    // Variables
+    //========================================
+
+        // when true, displays win message, win++ 
+        win: false,
+
+        wins: 0, 
+        losses: 0,
+        
+        // dictionary containing all words and defs
+        wordDictionary : { 
+            "8-ball": "a pool (pocket billiards) game popular in much of the world, and the subject of international professional and amateur competition. Played on a pool table with six pockets, the game is so universally known in some countries that beginners are often unaware of other pool games and believe the word 'pool' itself refers to eight-ball. The game has numerous variations, mostly regional. Standard eight-ball is the second most competitive professional pool game, after nine-ball, and for the last several decades ahead of straight pool.",
+            "ball-in-hand": "Also cue ball in-hand. The option of placing the cue ball anywhere on the table prior to shooting, in a game of pool. Usually only available to a player when the opposing player has committed some type of foul under a particular game's rules.",
+            "black ball": "Chiefly British: The black ball (usually numbered '8') in standard blackball and traditional 8-ball pool",
+            "bottom spin": "A type of spin applied to the cue ball by hitting it below its equator, causing it to spin backwards even as it slides forward on the cloth. Back spin slows the cue ball down, reduces its travel, and narrows both the carom angle after contact with an object ball, and angle of reflection off a cushion.",
+            "drag shot": "A shot played slowly and with heavy draw and follow-through so that the cue ball can be struck firmly but with a lot of the pace taken out, allowing more control than just a gentle tap that would travel as far. Also called 'Drag Draw'."
+        },
+        
+        //length of word + some x 
+        guessesRemaining: 0, 
+
+        // word chosen randomly 
+        correctWord: '',
+
+        // user input string that will appear on page as well as go into lettersGuessed. 
+        letterGuess: '',
+
+        // string of previously guessed variables
+        // duplicates do not append
+        lettersGuessed: '',
+
+        // string of missing letters so far to be populated by wordDictionary words, checked if letterGuess is inside, then remove from string
+        missingLetters: '',
+
+
+
+    //========================================
+    // Functions
+    //========================================
+        // 
+
+
+        // function for randomly generating an int to be used as index in word selection logic
+        getRandomInt: function(min, max) {
+          return Math.floor(Math.random() * (max - min + 1)) + min;
+        },
+
+        // function that takes random int and selects from wordDictionary a random word and it's definition
+        selectWord: function() { 
+            // find size of wordDictionary
+            var size = Object.keys(this.wordDictionary).length;
+
+            console.log("size is "+ size);
+
+            // generate random int between 0 and length of wordDictionary
+            var x = this.getRandomInt(0, size);
+
+            console.log("x is "+ x);
+
+            // word is the key of wordDictionary at index x
+            var word = Object.keys(this.wordDictionary)[x];
+
+            // definition is wordDictionary[key of wordDictionary at index x]
+            var definition = this.wordDictionary[Object.keys(this.wordDictionary)[x]];
+
+            console.log("word is "+ word);
+            console.log("definition is: "+ definition);
+
+            this.correctWord = word;
+
+            console.log("correctWord is "+this.correctWord);
+        },
+
+        // function that generates guessesRemaining based on correctWord length
+        
+
+
+        // select index from wordDictionary myobj[Object.keys(myobj)[0]]; Logic for selecting specific index from object
+
+    };
+    
+    </script>
+        Press any alpha-numeric key to get started. 
     </body>
 </html>
