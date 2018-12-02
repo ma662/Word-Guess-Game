@@ -88,13 +88,13 @@
             this.correctWord = ['', ''];
             this.guessesRemaining = 0;
 
-            game.selectWord( 0 ); // debug, force first word
+            game.selectWord(); // debug, force first word
             game.playerInput();
         },
 
         // function that takes random int and selects from wordDictionary a random word and it's definition
         selectWord: function(debugVal) { 
-            console.log("[------------  [[ selectWord() start [[ ");
+            console.log("[------------ selectWord() start ►");
             // declare local vars
             var size;
             var x;
@@ -139,14 +139,14 @@
             console.log("correctWord: " + this.correctWord[0]);
             console.log("correctWord (formatted): " + this.correctWord[1]);
 
-            console.log("------------] selectWord() end");
+            console.log("------------] selectWord() end ■ ]]");
             console.log("Calling genGuessesRemaining() ~> ");
             game.genGuessesRemaining(word);
         },
 
         // function that generates how many guessesRemaining
         genGuessesRemaining: function() {
-            console.log("[------------  [[ genGuessesRemaining() start [[ ");
+            console.log("[------------  [[ genGuessesRemaining() start ► [[ ");
 
             var baseLength;
             var additional = 5;
@@ -168,13 +168,13 @@
             this.guessesRemaining = guessesRemaining;
             console.log("baseLength + additional: " + this.guessesRemaining);
             
-            console.log("------------] genGuessesRemaining() end");
+            console.log("------------] genGuessesRemaining() end ■ ]]");
         },
 
         // function to determine remainingLetters left after the currentGuess
         // called after every valid input
         genRemainingLetters: function() {
-            console.log("[------------  [[ genRemainingLetters() start [[ ");
+            console.log("[------------  [[ genRemainingLetters() start ► [[ ");
 
             var word;
             var guess = game.currentGuess;
@@ -212,19 +212,26 @@
             console.log('remainingLetters is: ' + this.remainingLetters);
 
 
-            console.log("------------] genRemainingLetters() end");
+            console.log("------------] genRemainingLetters() end ■ ]]");
             console.log("Calling checkWin() ~>");
             game.checkWin(this.remainingLetters);
         },
         
         // function for adding input to lettersGuessed string
         genLettersGuessed: function() {
-            console.log("[------------  [[ genLettersGuessed() start [[ ");
+            console.log("[------------  [[ genLettersGuessed() start ► [[ ");
             // explicitly make sure lettersGuessed is a string equal to itself
-            game.lettersGuessed = game.lettersGuessed.toString();
+            
+            var lettersGuessed;
+            var currentGuess;
+            var win = game.win;
+            var lose = game.lose;
+
+            lettersGuessed = game.lettersGuessed; //.toString();
+            currentGuess = game.currentGuess;
                 
             // if lettersGuessed includes the valid currentGuess
-            if (!game.lettersGuessed.includes(game.currentGuess)) {
+            if (!lettersGuessed.includes(currentGuess)) {
                 game.lettersGuessed += game.currentGuess;
 
                 console.log("letters guessed so far: " + game.lettersGuessed);
@@ -232,10 +239,17 @@
                 console.log("Calling guessesLeft() ~> [from genLettersGuessed]");
                 game.guessesLeft();
             }
-            else {
+            else if (!currentGuess === ''){
+                console.log({
+                    lettersGuessed : lettersGuessed,
+                    currentGuess : currentGuess,
+                    win : win,
+                    lose : lose
+                });
+
                 alert("You've already guessed that letter.");
             }
-            console.log("------------] genLettersGuessed() end");
+            console.log("------------] genLettersGuessed() end ■ ]]");
         },
 
         // function for telling how many guessesLeft
@@ -243,7 +257,7 @@
         // if guessesLeft is 0
         // technically should only subtract if input is inside lettersGuessed
         guessesLeft: function() {
-            console.log("[------------  [[ guessesLeft() start [[ ");
+            console.log("[------------  [[ guessesLeft() start ► [[ ");
 
             var guessesRemaining = game.guessesRemaining;
             var correctWord = game.correctWord[1];
@@ -256,12 +270,13 @@
                 currentGuess : currentGuess,
             });
 
-            console.log(correctWord.includes(currentGuess));
             
             if((guessesRemaining != 0) &&                       // player didn't lose
             !(correctWord.includes(currentGuess))){             // correctWord doesn't contain currentGuess
-                guessesRemaining -= 1;
+            guessesRemaining -= 1;
             }
+        
+            console.log("After Logic");
             
             console.log({
                 guessesRemaining : guessesRemaining,
@@ -274,25 +289,24 @@
             game.guessesRemaining = guessesRemaining;
                 
             //game.checkLose();
-            
-
             console.log("guessesLeft (lives left) is: " + game.guessesRemaining)
-            console.log("------------] guessesLeft() end");
+            console.log("------------] guessesLeft() end ■ ]]");
         },
 
         // function for playerInput
         playerInput: function() {
-        console.log("[------------  [[ playerInput() start [[ ");
-
+        console.log("[------------  [[ playerInput() start ► [[ ");
+        
+            // declare local vars
+            var isValid = false;
+            var code;
+            var guess = game.currentGuess;
+            var wins = game.wins;
+            var losses = game.losses;
+            
             // when detecting key input on page
             document.onkeyup = function(input_event){
-                
-                // declare local vars
                 var rawInput = input_event.key;
-                var isValid = false;
-                var code;
-                var guess = game.currentGuess;
-
                 console.log("rawInput: " + rawInput);
                 
                 // turn rawInput into charCode and check if valid
@@ -309,7 +323,6 @@
                     
                     // force rawInput to be lowercase
                     guess = rawInput.toLowerCase();
-                    
                     console.log(isValid + ", input is truly alphanumeric and has been formatted");
                     
                     // set game object var to local var
@@ -327,14 +340,26 @@
                     game.genLettersGuessed();
                 }
 
+                console.log("onkeyup event data:");
                 console.log({
                     rawInput : rawInput,
-                    isValid : isValid,
                     code : code,
-                    guess : guess,
                 });
-                console.log("------------] playerInput() end");
-            }
+            } // end onkeyup event 
+
+            // if wins or losses is greater than 1 reset the vars
+            if (wins > 0 || losses > 0) {
+                    isValid = false;
+                    code = 0;
+                    guess = '';
+                }
+
+            console.log( "playerInput() data:");
+            console.log({
+                isValid : isValid,
+                guess : guess,
+            });
+            console.log("------------] playerInput() end ■ ]]");
         },
 
         // NOTES:
@@ -343,32 +368,38 @@
         
         // function just to check if win 
         checkWin: function(anyRemaining) {
-            console.log("[------------  [[ checkWin() start [[ ");
+            console.log("[------------  [[ checkWin() start ► [[ ");
 
             // declare local vars
             var win = game.win;
             var wins = game.wins;
+            var restart = false;
 
             if (anyRemaining.length === 0) {
                 console.log("Game won!");
 
-                game.win = true;
-                game.wins++;
-
-                // call restart function
-                game.restart();
-
-                console.log({
-                    win : win,
-                    wins : wins,
-                    anyRemaining : anyRemaining
-                });
+                win = true;
+                wins++;
+                restart = true;
             }
             else{
                 console.log("Win not yet detected");
             }
+            
+            game.win = win;
+            game.wins = wins;
+            
+            console.log({
+                win : win,
+                wins : wins,
+                anyRemaining : anyRemaining
+            });
 
-                    
+            if (restart) {
+                // call restart function
+                game.exeRestart();
+            }
+            
                     // // if you run out of guesses, you lose
                     // if (game.guessesRemaining === 0 && 
                     //     game.g) {
@@ -405,31 +436,27 @@
                     //     game.restart = false;
                     //     game.newGame = true;
 
-                    //     // re-select a word from the dictionary
-                    //     // then generates guessesRemaining 
-                    //     console.log("Calling initialize() ~ ");
-                    //     game.initialize();    
-                    // }
 
-                    // console.log("Neither win, loss, or restart");
-        console.log("------------] checkWin() end");
+        console.log("------------] checkWin() end ■ ]]");
         },
 
         checkLose: function() {
             //code
         },
 
-        restart: function() {
+        exeRestart: function() {
             console.log("Game Restarting!");
 
             game.win = false;
             game.lose = false;
             game.restart = false;
+
+            game.initialize();
         }
     }; // end gameObject
 
     game.initialize();
-    console.log("[------------ [[ Initial Gamestate Complete ]]");
+    console.log("[------------  [[ Initial Gamestate Complete ]]");
    
     </script>
         <p>Welcome to my 8-Ball Pool Word Guessing Game! Learn pool terms with this interactive application.</p>
