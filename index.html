@@ -16,88 +16,423 @@
     // make game object
     var game = {
     //========================================
-    // Variables
+    // Variables for processing
     //========================================
 
         // when true, displays win message, win++ 
         win: false,
+        lose: false,
+
+        //newGame: false,
 
         wins: 0, 
         losses: 0,
+        restart: false,
         
-        // dictionary containing all words and defs
+        // dictionary object containing all words and defs
         wordDictionary : { 
-            "8-ball": "a pool (pocket billiards) game popular in much of the world, and the subject of international professional and amateur competition. Played on a pool table with six pockets, the game is so universally known in some countries that beginners are often unaware of other pool games and believe the word 'pool' itself refers to eight-ball. The game has numerous variations, mostly regional. Standard eight-ball is the second most competitive professional pool game, after nine-ball, and for the last several decades ahead of straight pool.",
+            "8-ball": "A pool (pocket billiards) game popular in much of the world, and the subject of international professional and amateur competition. Played on a pool table with six pockets, the game is so universally known in some countries that beginners are often unaware of other pool games and believe the word 'pool' itself refers to eight-ball. The game has numerous variations, mostly regional. Standard eight-ball is the second most competitive professional pool game, after nine-ball, and for the last several decades ahead of straight pool.",
             "ball-in-hand": "Also cue ball in-hand. The option of placing the cue ball anywhere on the table prior to shooting, in a game of pool. Usually only available to a player when the opposing player has committed some type of foul under a particular game's rules.",
             "black ball": "Chiefly British: The black ball (usually numbered '8') in standard blackball and traditional 8-ball pool",
             "bottom spin": "A type of spin applied to the cue ball by hitting it below its equator, causing it to spin backwards even as it slides forward on the cloth. Back spin slows the cue ball down, reduces its travel, and narrows both the carom angle after contact with an object ball, and angle of reflection off a cushion.",
-            "drag shot": "A shot played slowly and with heavy draw and follow-through so that the cue ball can be struck firmly but with a lot of the pace taken out, allowing more control than just a gentle tap that would travel as far. Also called 'Drag Draw'."
+            "drag shot": "A shot played slowly and with heavy draw and follow-through so that the cue ball can be struck firmly but with a lot of the pace taken out, allowing more control than just a gentle tap that would travel as far. Also called 'Drag Draw'.",
+            "double hit": "An illegal shot (foul) in which the cue stick's tip contacts the cue ball twice during a single stroke. Double hits often occur when a player shoots the cue ball when it is very close to an object ball or cushion, because it is difficult to move the cue stick away quickly enough after the cue ball rebounds from the cushion or object ball.",
+            "banger":"A derogatory term for a recreational or beginning player who 'bangs' the balls without any thought for position nor attempt to control the cue ball; also a reference to the predilection of beginners to often hit the cue ball far harder than necessary.",
+            "double kiss": "A situation in which a ball strikes another ball which is close to a rail and the struck ball rebounds back into the ball it was hit by; usually but not always unintended.",
+            "bank-the-8": "A rule variant common in bar pool versions of eight-ball, in which the 8-ball must be pocketed on a bank shot (generally this would either be accomplished via a bank shot proper or a kick shot); shooting the 8 straight in is a loss of game. Players may agree before the game begins to invoke this rule, or one player may challenge another player (who might accept or refuse) to conclude the game in this manner after it is already under way. Playing bank-the-8 can be considered rude if many other players are waiting to use the table, since it often makes the game last considerably longer. Often on bar tables three scratches determines a loss. The same with last-pocket.",
+            "check side": "also commonly referred to as 'check' is a type of spin imparted to the cue ball to make it rebound from a cushion at a shallower angle than it would if the spin had not been used. Normally played when the natural angle is no good to the player for the next shot.",
+            "cinch a ball": "To play a shot with the stroke and speed that makes it easiest to pocket the object ball, even at the expense of sacrificing position.",
+            "cling": "Phenomenon where two balls, (usually the cue ball and an object ball) have some foreign material (often residual chalk or dirt picked up from unbrushed cloth) between them at the point of contact, resulting in the struck object ball being thrown offline from the expected trajectory, and often also affecting the post-impact path of the cue ball.",
+            "cloth": "The baize cloth covering the tables playing surface and rails, usually made from wool or a wool-nylon blend. In use since the 15th century, cloth is traditionally green-colored, chosen for its evocation of grass. Sometimes cloth is improperly referred to as 'felt.' The properties of the cloth used to cover a table, as well as environmental conditions that can affect it—notably humidity, the degree it has been stretched when installed, and its level of cleanness—have a profound effect on play.",
+            "combination": "Also combination shot, combo. Any shot in which the cue ball contacts an object ball, which in turn hits one or more additional object balls (which in turn may hit yet further object balls) to send the last-hit object ball to an intended place, usually a pocket.[5] In the UK this is often referred to as a plant.",
+            "contact point": "The point on each of two balls at which they touch at the moment of impact."
         },
         
-        //length of word + some x 
+        // length of word + some x 
+        // when this equals 0 after gameStart, losses++
         guessesRemaining: 0, 
 
         // word chosen randomly 
-        correctWord: '',
+        correctWord: ['', ''],
 
         // user input string that will appear on page as well as go into lettersGuessed. 
-        letterGuess: '',
+        currentGuess: '',
 
         // string of previously guessed variables
         // duplicates do not append
         lettersGuessed: '',
 
-        // string of missing letters so far to be populated by wordDictionary words, checked if letterGuess is inside, then remove from string
-        missingLetters: '',
+        // string of missing letters so far to be populated by wordDictionary words, checked if currentGuess is inside, then remove from string
+        remainingLetters: '',
 
+    //========================================
+    // Variables for displaying
+    //========================================
 
+                // fill here
 
     //========================================
     // Functions
     //========================================
-        // 
-
 
         // function for randomly generating an int to be used as index in word selection logic
         getRandomInt: function(min, max) {
           return Math.floor(Math.random() * (max - min + 1)) + min;
         },
 
-        // function that takes random int and selects from wordDictionary a random word and it's definition
-        selectWord: function() { 
-            // find size of wordDictionary
-            var size = Object.keys(this.wordDictionary).length;
+        // function that sets all the shit
+        initialize: function(){
+            this.remainingLetters = '';
+            this.lettersGuessed = '';
+            this.currentGuess = '';
+            this.correctWord = ['', ''];
+            this.guessesRemaining = 0;
 
-            console.log("size is "+ size);
-
-            // generate random int between 0 and length of wordDictionary
-            var x = this.getRandomInt(0, size);
-
-            console.log("x is "+ x);
-
-            // word is the key of wordDictionary at index x
-            var word = Object.keys(this.wordDictionary)[x];
-
-            // definition is wordDictionary[key of wordDictionary at index x]
-            var definition = this.wordDictionary[Object.keys(this.wordDictionary)[x]];
-
-            console.log("word is "+ word);
-            console.log("definition is: "+ definition);
-
-            this.correctWord = word;
-
-            console.log("correctWord is "+this.correctWord);
+            game.selectWord( 0 ); // debug, force first word
+            game.playerInput();
         },
 
-        // function that generates guessesRemaining based on correctWord length
+        // function that takes random int and selects from wordDictionary a random word and it's definition
+        selectWord: function(debugVal) { 
+            console.log("[------------  [[ selectWord() start [[ ");
+            // declare local vars
+            var size;
+            var x;
+            var word;
+            var definition;
+
+            // for testing wordDictionary selection
+            
+            // find size of wordDictionary. 
+            size = Object.keys(this.wordDictionary).length;
+            
+            // generate random int between 0 and length of wordDictionary. -1 to account for index max not taking into account the 0th index.
+            x = this.getRandomInt(0, size - 1);
+            
+            // force x to be certain integer
+            if (typeof debugVal === 'number'){
+                x = debugVal;
+            }
+                        
+            // word is the key of wordDictionary at index x
+            word = Object.keys(this.wordDictionary)[x];
+            console.log("Word selected.");
+
+            // definition is wordDictionary[key of wordDictionary at index x]
+            definition = this.wordDictionary[Object.keys(this.wordDictionary)[x]];
+            console.log("Definition selected.");
+
+            console.log({
+                debugVal : debugVal,
+                size : size,
+                x : x,
+                word : word,
+                definition : definition,
+            });
+            
+            // correctWord[0] is word
+            this.correctWord[0] = word;
+
+            // correctWord[1] is formatted
+            this.correctWord[1] = this.correctWord[0].replace(/\W/g, '');
+
+            console.log("correctWord: " + this.correctWord[0]);
+            console.log("correctWord (formatted): " + this.correctWord[1]);
+
+            console.log("------------] selectWord() end");
+            console.log("Calling genGuessesRemaining() ~> ");
+            game.genGuessesRemaining(word);
+        },
+
+        // function that generates how many guessesRemaining
+        genGuessesRemaining: function() {
+            console.log("[------------  [[ genGuessesRemaining() start [[ ");
+
+            var baseLength;
+            var additional = 5;
+            var guessesRemaining;
+
+            // find length of formatted correctWord length
+            baseLength = this.correctWord[1].length;
+
+            // set guessesRemaining local var
+            guessesRemaining = baseLength + additional;
+
+            console.log({
+                baseLength : baseLength,
+                additional : additional,
+                guessesRemaining : guessesRemaining,
+            });
+
+            // set guessesRemaining game object var
+            this.guessesRemaining = guessesRemaining;
+            console.log("baseLength + additional: " + this.guessesRemaining);
+            
+            console.log("------------] genGuessesRemaining() end");
+        },
+
+        // function to determine remainingLetters left after the currentGuess
+        // called after every valid input
+        genRemainingLetters: function() {
+            console.log("[------------  [[ genRemainingLetters() start [[ ");
+
+            var word;
+            var guess = game.currentGuess;
+            
+            console.log(game.remainingLetters === '');
+
+            // the initialized case
+            if (game.remainingLetters === '') {
+                // set word equal to formatted string
+                word = this.correctWord[1];
+            }
+            else {
+                word = this.remainingLetters;
+            }
+
+            console.log("at this point, word is: " + word);
+            
+            // if remainingLetters contains currentGuess
+            if (word.includes(guess)) {                     
+                console.log('remainingLetters contains currentGuess!');
+
+                console.log({
+                    word: word,
+                    guess: guess
+                });
+                
+                                                            // go through remainingLetters, replace each instance of currentGuess 
+                for (var i=0; i<word.length; i++){          // for the entire word length
+                    word = word.replace(guess, '');         // replace the guess with blank
+                    console.log(this.remainingLetters);     // testing if word replacement is working
+                }
+            }
+            
+            this.remainingLetters = word;                   // now remainintLetters is the word minus the guess or it will equal word from initial case
+            console.log('remainingLetters is: ' + this.remainingLetters);
+
+
+            console.log("------------] genRemainingLetters() end");
+            console.log("Calling checkWin() ~>");
+            game.checkWin(this.remainingLetters);
+        },
         
+        // function for adding input to lettersGuessed string
+        genLettersGuessed: function() {
+            console.log("[------------  [[ genLettersGuessed() start [[ ");
+            // explicitly make sure lettersGuessed is a string equal to itself
+            game.lettersGuessed = game.lettersGuessed.toString();
+                
+            // if lettersGuessed includes the valid currentGuess
+            if (!game.lettersGuessed.includes(game.currentGuess)) {
+                game.lettersGuessed += game.currentGuess;
 
+                console.log("letters guessed so far: " + game.lettersGuessed);
+                
+                console.log("Calling guessesLeft() ~> [from genLettersGuessed]");
+                game.guessesLeft();
+            }
+            else {
+                alert("You've already guessed that letter.");
+            }
+            console.log("------------] genLettersGuessed() end");
+        },
 
-        // select index from wordDictionary myobj[Object.keys(myobj)[0]]; Logic for selecting specific index from object
+        // function for telling how many guessesLeft
+        // when userInput is good, subtract 1 from the number of guesses
+        // if guessesLeft is 0
+        // technically should only subtract if input is inside lettersGuessed
+        guessesLeft: function() {
+            console.log("[------------  [[ guessesLeft() start [[ ");
 
-    };
-    
+            var guessesRemaining = game.guessesRemaining;
+            var correctWord = game.correctWord[1];
+            var currentGuess = game.currentGuess;
+            var remainingLetters = game.remainingLetters;
+
+            console.log({
+                guessesRemaining : guessesRemaining,
+                correctWord : correctWord,
+                currentGuess : currentGuess,
+            });
+
+            console.log(correctWord.includes(currentGuess));
+            
+            if((guessesRemaining != 0) &&                       // player didn't lose
+            !(correctWord.includes(currentGuess))){             // correctWord doesn't contain currentGuess
+                guessesRemaining -= 1;
+            }
+            
+            console.log({
+                guessesRemaining : guessesRemaining,
+                correctWord : correctWord,
+                currentGuess : currentGuess,
+                remainingLetters : remainingLetters
+            });
+
+            // set game object var to local var
+            game.guessesRemaining = guessesRemaining;
+                
+            //game.checkLose();
+            
+
+            console.log("guessesLeft (lives left) is: " + game.guessesRemaining)
+            console.log("------------] guessesLeft() end");
+        },
+
+        // function for playerInput
+        playerInput: function() {
+        console.log("[------------  [[ playerInput() start [[ ");
+
+            // when detecting key input on page
+            document.onkeyup = function(input_event){
+                
+                // declare local vars
+                var rawInput = input_event.key;
+                var isValid = false;
+                var code;
+                var guess = game.currentGuess;
+
+                console.log("rawInput: " + rawInput);
+                
+                // turn rawInput into charCode and check if valid
+                code = rawInput.charCodeAt(0);
+                if ((!(code > 47 && code < 58) &&    // numeric (0-9)
+                     !(code > 64 && code < 91) &&    // upper alpha (A-Z)
+                     !(code > 96 && code < 123))     // lower alpha (a-z)
+                     || (rawInput.length != 1)) {    // or rawInput.length is too long
+                    console.log(isValid + ", not alphanumeric");
+                    alert("Only number and letter input, please try again.");
+                }
+                else {
+                    isValid = true;
+                    
+                    // force rawInput to be lowercase
+                    guess = rawInput.toLowerCase();
+                    
+                    console.log(isValid + ", input is truly alphanumeric and has been formatted");
+                    
+                    // set game object var to local var
+                    game.currentGuess = guess;
+                }
+
+                // if the input isValid
+                if (isValid){
+                    // call function to determine remainingLetters left after the currentGuess
+                    console.log("Calling genRemainingLetters() ~> ");
+                    game.genRemainingLetters(game.correctWord);
+                    
+                    // call function for adding input to lettersGuessed string
+                    console.log("Calling genLettersGuessed() ~> ");
+                    game.genLettersGuessed();
+                }
+
+                console.log({
+                    rawInput : rawInput,
+                    isValid : isValid,
+                    code : code,
+                    guess : guess,
+                });
+                console.log("------------] playerInput() end");
+            }
+        },
+
+        // NOTES:
+        // if win is true, restart
+        // if lose is true, restart
+        
+        // function just to check if win 
+        checkWin: function(anyRemaining) {
+            console.log("[------------  [[ checkWin() start [[ ");
+
+            // declare local vars
+            var win = game.win;
+            var wins = game.wins;
+
+            if (anyRemaining.length === 0) {
+                console.log("Game won!");
+
+                game.win = true;
+                game.wins++;
+
+                // call restart function
+                game.restart();
+
+                console.log({
+                    win : win,
+                    wins : wins,
+                    anyRemaining : anyRemaining
+                });
+            }
+            else{
+                console.log("Win not yet detected");
+            }
+
+                    
+                    // // if you run out of guesses, you lose
+                    // if (game.guessesRemaining === 0 && 
+                    //     game.g) {
+
+                    //     game.lose = true;
+                    //     game.restart = true;  
+                    // } 
+                    // else if (game.remainingLetters.length === 0) {
+                    // //&& game.newGame === true) {
+                    //     game.win = true;
+                    //     game.restart = true;
+                    // }
+                    
+                    // // if lose, restart
+                    // if (game.lose){
+                    //     console.log("Game lost!");
+                    //     game.lose++;
+                    //     game.restart = true;
+                    // }
+
+                    // // if win restart
+                    // if (game.win){
+                    //     console.log("Game Won!");
+                    //     game.win++;
+                    //     game.restart = true;
+                    // }
+
+                    // // if restart, reset
+                    // if (game.restart) {
+                    //     console.log("Game Restarting!");
+
+                    //     game.win = false;
+                    //     game.lose = false;
+                    //     game.restart = false;
+                    //     game.newGame = true;
+
+                    //     // re-select a word from the dictionary
+                    //     // then generates guessesRemaining 
+                    //     console.log("Calling initialize() ~ ");
+                    //     game.initialize();    
+                    // }
+
+                    // console.log("Neither win, loss, or restart");
+        console.log("------------] checkWin() end");
+        },
+
+        checkLose: function() {
+            //code
+        },
+
+        restart: function() {
+            console.log("Game Restarting!");
+
+            game.win = false;
+            game.lose = false;
+            game.restart = false;
+        }
+    }; // end gameObject
+
+    game.initialize();
+    console.log("[------------ [[ Initial Gamestate Complete ]]");
+   
     </script>
-        Press any alpha-numeric key to get started. 
+        <p>Welcome to my 8-Ball Pool Word Guessing Game! Learn pool terms with this interactive application.</p>
+        <p>Press any alpha-numeric key to get started.</p>
     </body>
 </html>
