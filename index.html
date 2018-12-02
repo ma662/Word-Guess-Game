@@ -9,6 +9,24 @@
     <!-- FOR LATER -->
     <!-- <script src="assets/javascript/game.js"></script> -->
 
+    <style>
+
+            body {
+                background-color: rgb(192, 250, 106);
+            }
+
+            #titleBox {
+                background-color: green;
+            }
+
+            #inputDisplay {
+                background-color: yellow;
+            }
+
+            div.content { 
+                background-color: red;
+            }
+    </style>
 </head>
     <body>
     <script type="text/javascript">
@@ -23,11 +41,8 @@
         win: false,
         lose: false,
 
-        //newGame: false,
-
         wins: 0, 
         losses: 0,
-        restart: false,
         
         // dictionary object containing all words and defs
         wordDictionary : { 
@@ -49,7 +64,6 @@
         },
         
         // length of word + some x 
-        // when this equals 0 after gameStart, losses++
         guessesRemaining: 0, 
 
         // word chosen randomly 
@@ -59,20 +73,19 @@
         currentGuess: '',
 
         // string of previously guessed variables
-        // duplicates do not append
         lettersGuessed: '',
 
         // string of missing letters so far to be populated by wordDictionary words, checked if currentGuess is inside, then remove from string
         remainingLetters: '',
 
     //========================================
-    // Variables for displaying
+    // Functions for Displaying
     //========================================
+        
 
-                // fill here
 
     //========================================
-    // Functions
+    // Functions for Processing
     //========================================
 
         // function for randomly generating an int to be used as index in word selection logic
@@ -88,7 +101,7 @@
             this.correctWord = ['', ''];
             this.guessesRemaining = 0;
 
-            game.selectWord(); // debug, force first word
+            game.selectWord( 0 ); // debug, force first word
             game.playerInput();
         },
 
@@ -149,7 +162,7 @@
             console.log("[------------  [[ genGuessesRemaining() start ► [[ ");
 
             var baseLength;
-            var additional = 5;
+            var additional = 0;
             var guessesRemaining;
 
             // find length of formatted correctWord length
@@ -179,7 +192,7 @@
             var word;
             var guess = game.currentGuess;
             
-            console.log(game.remainingLetters === '');
+            //console.log(game.remainingLetters === '');
 
             // the initialized case
             if (game.remainingLetters === '') {
@@ -189,28 +202,27 @@
             else {
                 word = this.remainingLetters;
             }
-
-            console.log("at this point, word is: " + word);
-            
+           
             // if remainingLetters contains currentGuess
             if (word.includes(guess)) {                     
                 console.log('remainingLetters contains currentGuess!');
-
                 console.log({
                     word: word,
                     guess: guess
                 });
-                
-                                                            // go through remainingLetters, replace each instance of currentGuess 
-                for (var i=0; i<word.length; i++){          // for the entire word length
-                    word = word.replace(guess, '');         // replace the guess with blank
-                    console.log(this.remainingLetters);     // testing if word replacement is working
-                }
+
+                // create a new regexp object. uses currentGuess with argument g (replace all instances) and stores it into re
+                var re = new RegExp(guess, "g");
+                word = word.replace(re, '');
             }
             
-            this.remainingLetters = word;                   // now remainintLetters is the word minus the guess or it will equal word from initial case
-            console.log('remainingLetters is: ' + this.remainingLetters);
+            // set local var to game object var
+            this.remainingLetters = word;
 
+            console.log({
+                word: word,
+                guess: guess
+            });
 
             console.log("------------] genRemainingLetters() end ■ ]]");
             console.log("Calling checkWin() ~>");
@@ -288,7 +300,8 @@
             // set game object var to local var
             game.guessesRemaining = guessesRemaining;
                 
-            //game.checkLose();
+            game.checkLose(game.guessesRemaining);
+
             console.log("guessesLeft (lives left) is: " + game.guessesRemaining)
             console.log("------------] guessesLeft() end ■ ]]");
         },
@@ -361,10 +374,6 @@
             });
             console.log("------------] playerInput() end ■ ]]");
         },
-
-        // NOTES:
-        // if win is true, restart
-        // if lose is true, restart
         
         // function just to check if win 
         checkWin: function(anyRemaining) {
@@ -385,10 +394,16 @@
             else{
                 console.log("Win not yet detected");
             }
-            
+
+            // assign local vars to object vars
             game.win = win;
             game.wins = wins;
             
+            if (win) {
+                // replace with page update
+                alert("You've won!");
+            }
+
             console.log({
                 win : win,
                 wins : wins,
@@ -397,59 +412,58 @@
 
             if (restart) {
                 // call restart function
-                game.exeRestart();
+                game.doRestart();
             }
-            
-                    // // if you run out of guesses, you lose
-                    // if (game.guessesRemaining === 0 && 
-                    //     game.g) {
-
-                    //     game.lose = true;
-                    //     game.restart = true;  
-                    // } 
-                    // else if (game.remainingLetters.length === 0) {
-                    // //&& game.newGame === true) {
-                    //     game.win = true;
-                    //     game.restart = true;
-                    // }
-                    
-                    // // if lose, restart
-                    // if (game.lose){
-                    //     console.log("Game lost!");
-                    //     game.lose++;
-                    //     game.restart = true;
-                    // }
-
-                    // // if win restart
-                    // if (game.win){
-                    //     console.log("Game Won!");
-                    //     game.win++;
-                    //     game.restart = true;
-                    // }
-
-                    // // if restart, reset
-                    // if (game.restart) {
-                    //     console.log("Game Restarting!");
-
-                    //     game.win = false;
-                    //     game.lose = false;
-                    //     game.restart = false;
-                    //     game.newGame = true;
-
 
         console.log("------------] checkWin() end ■ ]]");
         },
 
-        checkLose: function() {
-            //code
+        checkLose: function(numGuesses) {
+        console.log("[------------  [[ checkLose() start ► [[ ");
+
+            // declare local vars
+            var lose = game.lose;
+            var losses = game.losses;
+            var restart = false;
+
+            // if numGuesses reaches 0
+            if (numGuesses === 0) {
+                lose = true;
+                losses++;
+                restart = true;
+            }
+            else{
+                console.log("Loss not yet detected");
+            }
+            
+            // assign local vars to object vars
+            game.lose = lose;
+            game.losses = losses;
+            
+            if (lose) {
+                // replace with page update
+                alert("You've lost!");
+            }
+
+            console.log({
+                lose : lose,
+                losses : losses,
+                numGuesses : numGuesses
+            });
+
+            if (restart) {
+                // call restart function
+                game.doRestart();
+            }
+
+        console.log("------------] checkLose() end ■ ]]");
         },
 
-        exeRestart: function() {
+        doRestart: function() {
             console.log("Game Restarting!");
 
             game.win = false;
             game.lose = false;
-            game.restart = false;
 
             game.initialize();
         }
@@ -459,7 +473,25 @@
     console.log("[------------  [[ Initial Gamestate Complete ]]");
    
     </script>
-        <p>Welcome to my 8-Ball Pool Word Guessing Game! Learn pool terms with this interactive application.</p>
-        <p>Press any alpha-numeric key to get started.</p>
+
+     
+        
+        <div id="titleBox">
+            8-ball Pool Guessing Game ! 
+        </div>
+
+        <div class="content">
+                <p>Welcome to my 8-Ball Pool Word Guessing Game! Learn pool terms with this interactive application.</p>
+                <p>Press any alpha-numeric key to get started.</p>
+
+
+                <div id="inputDisplay">
+
+                <p>_ _ _ _ _ _ _</p> <!-- test -->
+            
+                </div>
+        </div>
+
+       
     </body>
 </html>
