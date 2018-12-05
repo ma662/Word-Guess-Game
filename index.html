@@ -5,10 +5,11 @@
     <meta charset="UTF-8"/>
 
     <link rel="shortcut icon" href="./assets/images/icon.png"/>
-
+    <link href="https://fonts.googleapis.com/css?family=Bitter|Bungee|Rajdhani:700" rel="stylesheet">
     <!-- FOR LATER -->
     <!-- <script src="assets/javascript/game.js"></script> -->
-
+</head>
+    <body>            
     <style>
 
             body {
@@ -17,46 +18,187 @@
 
             #titleBox {
                 background-color: green;
+                color: beige;
+                border: 3.5px ridge maroon;
+
+                font-size: 1.8em;
+                padding-left: 2%;
             }
 
+            .title, p.smaller {
+                text-align: center;
+            }
+
+            .title {
+                text-shadow: 5px 5px 1px black;
+                font-family: 'Bungee', cursive;
+                margin: 0 auto;
+                padding: 0;
+            }
+
+            p.smaller {
+                font-family: 'Bitter', regular;
+                font-size: 0.55em;
+                /* //text-align: end; */
+                margin-top: -1em;
+                margin-right: 25px;
+            }
+
+            .content_container {
+                display: inline-block;
+                width: 100%;
+            }
+
+            div.content_containerLeft { 
+                margin-top: 2em;
+                padding: 2%;
+                width: 45%;
+                float: left;
+                text-align: center;
+
+                background-color: rgba(245, 245, 245, 0.418);
+                border: 4px inset maroon;
+            }
+            
             #inputDisplay {
-                background-color: yellow;
+                background-color: rgba(255, 192, 203, 0.685);
+                /* color: whitesmoke; */
+                border: 1px solid maroon;
+                border-left: 0px;
+                border-right: 0px;     
+
+                text-align: center;
+                letter-spacing: 2px;
+                font-size: 1.8em;
+                font-family: 'Rajdhani', sans-serif;
+                font-weight: bold;
+                padding: 1%;
+            }
+            
+            .dictionary {
+                margin-left: 4.5%;
+                margin-top: 2em;
+                float: left;
+                width: 40%;
+
+                background-color: rgba(255, 255, 0, 0.733);
+                color: darkgreen;
+
+                padding: 7px;
+
+                border: 2px dotted rgba(179, 124, 24, 0.575);
+                border-radius: 12px;
             }
 
-            div.content { 
-                background-color: red;
+            #decoration {
+                position: fixed;
+                bottom: -13em;
+                left: -6em;
+                z-index: -5;
             }
+
+            #lettersGuessedDisplay {
+                font-size: 2em;
+                margin-top: 1em;
+                height: 1.2em;
+                /* padding: 2%; */
+                padding-right: 2%;
+                padding-left: 2%;
+                width: 45%;
+
+                float: left;
+                text-align: center;
+                background-color: rgba(183, 235, 99, 0.418);
+                border: 4px inset maroon;
+            }
+
+            .trackingDiv {
+                /* background-color: cyan; */
+                float: right;
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                width: 100%;
+                height: 7em;
+
+                /* display: inline-block; */
+            }
+
+            #winDisplay, #loseDisplay {
+                z-index: 5;
+                position: relative;
+                float: right;
+                padding: 0;
+                margin: 0;
+            }
+
+            #winDisplay {
+                left: 273px;
+                bottom: -17px;
+            }
+
+            #loseDisplay {
+                left: 268px;
+                bottom: -51px;
+            }
+
+            #timeDisplay {
+                position: relative;
+                float: right;
+                bottom: -72px;
+                left: 288px;
+                font-family: monospace;
+                color: white;
+            }
+
+            #scoreBoard {
+                height: 100%;
+                float: right;
+                bottom: 0;
+                margin-right: 10%;
+            }
+
+
     </style>
-</head>
-    <body>            
         <div id="titleBox">
-                    8-ball Pool Guessing Game ! 
-                </div>
-        
-                <div class="content_container">
-                    <p>Welcome to my 8-Ball Pool Word Guessing Game! Learn pool terms with this interactive application.</p>
-                    <p>Press any alpha-numeric key to get started.</p>
-        
+            <p class="title">8-ball Pool Guessing Game !</p>
+            <!-- Change this ugly ass font -->
+            <p class="smaller">developed by Myles Alcala</p> 
+        </div>
+            <div class="content_container">
+                <div class="content_containerLeft">
+                    <p>Welcome to my 8-Ball Pool Word Guessing Game!</p>
+                    <p>Learn pool terms with this interactive application.</p>
+                    <br>
                     <div class="container">
                         <div>
                             <p id="inputDisplay"></p>
                         </div>
-                        <div>
-                            <p id="previousWordDisplay"></p>
-                            <p id="definitionDisplay"></p>
-                        </div>
                     </div>
                     
                     <!-- Track Game Information Here -->
-                    <div id="tracker">
-                        
-                    </div>
+                </div>
+                
+                <div class="dictionary">
+                    <p id="previousWordDisplay"></p>
+                    <p id="definitionDisplay">Press any alpha-numeric key to get started.</p>
+                </div>
+            </div>
+                <!-- Div for tracking wins, losses  -->
+                
+                <!-- Div for letersGuessed -->
+                <div id="lettersGuessedDisplay" style="display: none;"></div>
+                
+                <div class="trackingDiv">
+                    <img id="scoreBoard" src="./assets/images/custom_scoreboard.png">
+                    <p id="winDisplay">0</p>
+                    <p id="loseDisplay">0</p>
+                    <p id="timeDisplay"></p>
+                </div>
+
+                <img id="decoration" src="./assets/images/test1.png">
         
-        </div>
-
         <script type="text/javascript">
-            
-
         // make game object
         var game = {
         //========================================
@@ -81,8 +223,15 @@
                 "cinch a ball": "to play a shot with the stroke and speed that makes it easiest to pocket the object ball, even at the expense of sacrificing position.",
                 "cling": "phenomenon where two balls, (usually the cue ball and an object ball) have some foreign material (often residual chalk or dirt picked up from unbrushed cloth) between them at the point of contact, resulting in the struck object ball being thrown offline from the expected trajectory, and often also affecting the post-impact path of the cue ball.",
                 "cloth": "the baize cloth covering the tables playing surface and rails, usually made from wool or a wool-nylon blend. In use since the 15th century, cloth is traditionally green-colored, chosen for its evocation of grass. Sometimes cloth is improperly referred to as 'felt.' The properties of the cloth used to cover a table, as well as environmental conditions that can affect it—notably humidity, the degree it has been stretched when installed, and its level of cleanness—have a profound effect on play.",
-                "combination": "also combination shot, combo. Any shot in which the cue ball contacts an object ball, which in turn hits one or more additional object balls (which in turn may hit yet further object balls) to send the last-hit object ball to an intended place, usually a pocket.[5] In the UK this is often referred to as a plant.",
-                "contact point": "the point on each of two balls at which they touch at the moment of impact."
+                "combination": "also combination shot, combo. Any shot in which the cue ball contacts an object ball, which in turn hits one or more additional object balls (which in turn may hit yet further object balls) to send the last-hit object ball to an intended place, usually a pocket. In the UK this is often referred to as a plant.",
+                "contact point": "the point on each of two balls at which they touch at the moment of impact.",
+                "act of god": "disturbance of table or balls as a result of something out of a player's control (e.g., something falling from the ceiling, or an earthquake).",
+                "aiming line": "the imaginary line through the CB in the direction of the intended target (e.g., the center of the ghost ball) that results in contact with a rail or the OB at the desired contact point.",
+                "alternating break": "tournament format where the players take turns breaking, regardless of who wins the previous game.",
+                "answer": "successful reply to good play from the opponent.",
+                "behind the back": "playing a difficult to reach shot by shooting with the cue behind one's back.",
+                "butt": "the handle or grip end of the cue.",
+                "crush": "slang term for the break.",
             },
             
             // length of word + some x 
@@ -106,21 +255,24 @@
             // when true, displays win message, win++ 
             win: false,
             lose: false,
+
+            //trackingDisplay: document.getElementsByClassName("trackingDiv"),
             
             // string to be manipulated for the correct input display
             nowDisplaying: '',
-
             correctDefinition: '',
 
+            winDisplay: document.getElementById("winDisplay"),
+            loseDisplay: document.getElementById("loseDisplay"),
+            timeDisplay: document.getElementById("timeDisplay"),
+
             inputDisplay: document.getElementById("inputDisplay"),
+            lettersGuessedDisplay: document.getElementById("lettersGuessedDisplay"), // make changes after every valid input
 
             previousWordDisplay: document.getElementById("previousWordDisplay"),
             definitionDisplay: document.getElementById("definitionDisplay"),
-
-
-
-
-
+            
+            // i need to pull letters guessed into a div
 
 
         //========================================
@@ -164,6 +316,10 @@
                 //&& !(remainingLetters.includes(guess))){    // just replace the characters inside currentWord with guess but dont replace remainingLetters
                     toDisplay = currentWord.replace(notGuessed, '_');
                 }
+                // try to add else here 
+                // else {
+                //     toDisplay = currentWord.
+                // }
 
                 //displayFormatted = displayFormatted.split('').join('&nbsp;');   // "_ - _ _ _ _"
 
@@ -191,16 +347,20 @@
                 this.lettersGuessed = '';
                 this.currentGuess = '';
                 this.nowDisplaying = '';
-
+                this.win = false;
+                this.lose = false;
+                
+                //this.trackingDisplay.innerHTML = "wins: " + game.wins + "\nlosses: " + game.losses;
                 this.inputDisplay.innerHTML = '';
+                this.lettersGuessedDisplay.style.display = "none";
 
                 game.selectWord(); // can pass debug parameter to force a word
                 game.playerInput();
-                game.initializeInput()
+                game.initializeInput();
             },
 
             // function that takes random int and selects from wordDictionary a random word and it's definition
-            selectWord: function(debugVal) { 
+            selectWord: function(debugVal) {
                 console.log("[------------ selectWord() start ►");
                 // declare local vars
                 var size;
@@ -276,7 +436,6 @@
                 // set guessesRemaining game object var
                 this.guessesRemaining = guessesRemaining;
                 console.log("baseLength + additional: " + this.guessesRemaining);
-                
                 console.log("------------] genGuessesRemaining() end ■ ]]");
             },
 
@@ -325,8 +484,9 @@
 
                 console.log("------------] genRemainingLetters() end ■ ]]");
                 console.log("Calling checkWin() ~>");
-
-                game.checkWin(this.remainingLetters);
+                
+                // maybe try when input is valid
+                // game.checkWin(this.remainingLetters);
             },
             
             // function for adding input to lettersGuessed string
@@ -341,18 +501,20 @@
 
                 lettersGuessed = game.lettersGuessed; //.toString();
                 currentGuess = game.currentGuess;
-                    
-                // if lettersGuessed includes the valid currentGuess
-                if (!lettersGuessed.includes(currentGuess)) {
-                    game.lettersGuessed += game.currentGuess;
 
-                    console.log("letters guessed so far: " + game.lettersGuessed);
                     
-                    console.log("Calling guessesLeft() ~> [from genLettersGuessed]");
-                    game.guessesLeft();
-                }
-                else if (!currentGuess === ''){
-                    console.log({
+                    // if lettersGuessed includes the valid currentGuess
+                    if (!lettersGuessed.includes(currentGuess)) {
+                        game.lettersGuessed += game.currentGuess;
+                        
+                        //this.lettersGuessedDisplay.innerHTML = lettersGuessed.toString();
+                        
+                        console.log("letters guessed so far: " + game.lettersGuessed);
+                        console.log("Calling guessesLeft() ~> [from genLettersGuessed]");
+                        game.guessesLeft();
+                    }
+                    else if (!currentGuess === ''){
+                        console.log({
                         lettersGuessed : lettersGuessed,
                         currentGuess : currentGuess,
                         win : win,
@@ -416,7 +578,7 @@
                 var guess = game.currentGuess;
                 var wins = game.wins;
                 var losses = game.losses;
-                
+               
                 // when detecting key input on page
                 document.onkeyup = function(input_event){
                     var rawInput = input_event.key;
@@ -429,7 +591,8 @@
                         !(code > 96 && code < 123))     // lower alpha (a-z)
                         || (rawInput.length != 1)) {    // or rawInput.length is too long
                         console.log(isValid + ", not alphanumeric");
-                        alert("Only number and letter input, please try again.");
+                        
+                        //alert("Only number and letter input, please try again.");
                     }
                     else {
                         isValid = true;
@@ -447,10 +610,21 @@
                         // call function to determine remainingLetters left after the currentGuess
                         console.log("Calling genRemainingLetters() ~> ");
                         game.genRemainingLetters(game.correctWord);
+                        var remainingLetters = game.remainingLetters;
                         
                         // call function for adding input to lettersGuessed string
                         console.log("Calling genLettersGuessed() ~> ");
                         game.genLettersGuessed();
+                        
+                        
+                        game.lettersGuessedDisplay.style.display = "block";
+                        game.lettersGuessedDisplay.innerHTML = game.lettersGuessed;
+                        //document.getElementById("myDIV").style.display = "none";
+                        // fucks up during certain conditions 
+                        //game.drawInput(game.currentGuess);
+
+                        // try checking win here
+                        game.checkWin(remainingLetters);
                     }
 
                     console.log("onkeyup event data:");
@@ -472,10 +646,6 @@
                     isValid : isValid,
                     guess : guess,
                 });
-                
-                console.log("attempting to drawInput()");
-                game.drawInput();
-
 
                 console.log("------------] playerInput() end ■ ]]");
             },
@@ -504,18 +674,16 @@
                 game.win = win;
                 game.wins = wins;
                 
-                if (win) {
+                if (game.win) {
                     // replace with page update
                     console.log("You've won!");
 
                     // display stuff
-                    //game.nowDisplaying = game.correctWord[0];
-                    //game.inputDisplay = game.nowDisplaying;
-
-                    game.previousWordDisplay.innerHTML = game.correctWord[0] + ":";
+                    game.previousWordDisplay.innerHTML = game.correctWord[0] + ": ";
                     game.definitionDisplay.innerHTML = game.correctDefinition.toLowerCase();
+                    game.winDisplay.innerHTML = game.wins;
                     
-                    alert("You've won! Congratulations!");
+                    alert("You've won! Congratulations!\nThe word was: " + game.correctWord[0]);
                 }
                 
                 console.log({
@@ -554,8 +722,9 @@
                 game.lose = lose;
                 game.losses = losses;
                 
-                if (lose) {
+                if (game.lose != false) {
                     // replace with page update
+                    game.loseDisplay.innerHTML = game.losses;
                     alert("You've lost!");
                 }
 
@@ -579,11 +748,24 @@
                 game.win = false;
                 game.lose = false;
 
+
+                var audio = new Audio("./assets/sounds/pool_break.mp3");
+                audio.play();
                 game.initialize();
             }
         }; // end gameObject
-
+        
+        function updateClock() {
+            var now = new Date(),
+            time = now.toLocaleTimeString();
+            
+            game.timeDisplay.innerHTML = new Date().toLocaleTimeString();
+            setTimeout(updateClock, 1000);
+        }
+        updateClock();
         game.initialize();
+       
+        
         console.log("[------------  [[ Initial Gamestate Complete ]]");
 
         </script>
