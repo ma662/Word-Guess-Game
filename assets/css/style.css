@@ -109,14 +109,16 @@ div.content_containerLeft {
 }
 
 #lettersGuessedDisplay {
-    font-size: 2em;
+    font-size: 1.8em;
+    font-family: 'Rajdhani', sans-serif;
+    letter-spacing: 3px;
     margin-top: 1em;
     height: 1.2em;
     /* padding: 2%; */
     padding-right: 2%;
     padding-left: 2%;
 
-    color: whitesmoke;
+    color: rgba(245, 245, 245, 0.85);
     background-color: rgba(53, 15, 15, 0.507);
 }
 
