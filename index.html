@@ -21,6 +21,10 @@
                 color: beige;
                 border: 3.5px ridge maroon;
 
+                width: 65%;
+                margin-left: auto;
+                margin-right: auto;
+
                 font-size: 1.8em;
                 padding-left: 2%;
             }
@@ -36,6 +40,9 @@
                 padding: 0;
             }
 
+            div.content_container > div.content_containerLeft > p {
+                color: darkslategray;
+            }
             p.smaller {
                 font-family: 'Bitter', regular;
                 font-size: 0.55em;
@@ -78,23 +85,38 @@
             .dictionary {
                 margin-left: 4.5%;
                 margin-top: 2em;
-                float: left;
-                width: 40%;
+                float: right;
+                width: 32%;
 
-                background-color: rgba(255, 255, 0, 0.733);
-                color: darkgreen;
+                background-color: rgba(255, 255, 0, 0.65);
+                color: darkslategray;
 
                 padding: 7px;
 
                 border: 2px dotted rgba(179, 124, 24, 0.575);
                 border-radius: 12px;
             }
+            
+            #previousWordDisplay {
+                text-align: start;
+            }
+
+            #definitionDisplay {
+                text-align: end;
+            }
 
             #decoration {
                 position: fixed;
                 bottom: -13em;
-                left: -6em;
+                left: 32%;
                 z-index: -5;
+            }
+            
+            #decoration2 {
+                position: fixed;
+                bottom: -23em;
+                left: 4%;
+                z-index: -4;
             }
 
             #lettersGuessedDisplay {
@@ -108,20 +130,17 @@
 
                 float: left;
                 text-align: center;
-                background-color: rgba(183, 235, 99, 0.418);
+                background-color: rgba(199, 37, 37, 0.35);
                 border: 4px inset maroon;
             }
 
             .trackingDiv {
-                /* background-color: cyan; */
                 float: right;
                 position: fixed;
                 bottom: 0;
                 left: 0;
                 width: 100%;
                 height: 7em;
-
-                /* display: inline-block; */
             }
 
             #winDisplay, #loseDisplay {
@@ -130,25 +149,38 @@
                 float: right;
                 padding: 0;
                 margin: 0;
+                font-family: 'Bungee', cursive;
+                opacity: 0.88;
             }
 
             #winDisplay {
-                left: 273px;
-                bottom: -17px;
+                left: 278px;
+                bottom: -5px;
             }
 
             #loseDisplay {
-                left: 268px;
-                bottom: -51px;
+                left: 276px;
+                bottom: -37px;
+            }
+
+            #guessesRemainingDisplay {
+                float: right;
+                position: relative;
+                margin: 0;
+                padding: 0;
+                left: 184px;
+                bottom: -85px;
+                font-size: 14px;
+                color: lightgray;
             }
 
             #timeDisplay {
                 position: relative;
                 float: right;
-                bottom: -72px;
-                left: 288px;
+                bottom: -71px;
+                left: 305px;
                 font-family: monospace;
-                color: white;
+                color: lightgray;
             }
 
             #scoreBoard {
@@ -165,38 +197,42 @@
             <!-- Change this ugly ass font -->
             <p class="smaller">developed by Myles Alcala</p> 
         </div>
-            <div class="content_container">
-                <div class="content_containerLeft">
-                    <p>Welcome to my 8-Ball Pool Word Guessing Game!</p>
-                    <p>Learn pool terms with this interactive application.</p>
-                    <br>
-                    <div class="container">
-                        <div>
-                            <p id="inputDisplay"></p>
-                        </div>
+
+        <div class="content_container">
+            <div class="content_containerLeft">
+                <p>Welcome to my 8-Ball Pool Word Guessing Game!</p>
+                <p>Learn pool terms with this interactive application.</p>
+                <p>You won't ever have to feel insecure about your pool knowledge again.</p>
+                <br>
+                <div class="container">
+                    <div>
+                        <p id="inputDisplay"></p>
                     </div>
-                    
-                    <!-- Track Game Information Here -->
                 </div>
                 
-                <div class="dictionary">
-                    <p id="previousWordDisplay"></p>
-                    <p id="definitionDisplay">Press any alpha-numeric key to get started.</p>
-                </div>
+                <!-- Track Game Information Here -->
             </div>
+            
+            <div class="dictionary">
+                <p id="previousWordDisplay"></p>
+                <p id="definitionDisplay">Press any alpha-numeric key to get started.</p>
+            </div>
+        </div>
                 <!-- Div for tracking wins, losses  -->
                 
                 <!-- Div for letersGuessed -->
                 <div id="lettersGuessedDisplay" style="display: none;"></div>
                 
                 <div class="trackingDiv">
-                    <img id="scoreBoard" src="./assets/images/custom_scoreboard.png">
+                    <img id="scoreBoard" src="./assets/images/custom_scoreboard.png"/>
                     <p id="winDisplay">0</p>
                     <p id="loseDisplay">0</p>
+                    <p id="guessesRemainingDisplay"></p>
                     <p id="timeDisplay"></p>
                 </div>
 
-                <img id="decoration" src="./assets/images/test1.png">
+                <img id="decoration" src="./assets/images/test1.png"/>
+                <img id="decoration2" src="./assets/images/table.png"/>
         
         <script type="text/javascript">
         // make game object
@@ -264,6 +300,7 @@
 
             winDisplay: document.getElementById("winDisplay"),
             loseDisplay: document.getElementById("loseDisplay"),
+            guessesRemainingDisplay: document.getElementById("guessesRemainingDisplay"),
             timeDisplay: document.getElementById("timeDisplay"),
 
             inputDisplay: document.getElementById("inputDisplay"),
@@ -353,6 +390,7 @@
                 //this.trackingDisplay.innerHTML = "wins: " + game.wins + "\nlosses: " + game.losses;
                 this.inputDisplay.innerHTML = '';
                 this.lettersGuessedDisplay.style.display = "none";
+                this.guessesRemainingDisplay.innerHTML = 0;
 
                 game.selectWord(); // can pass debug parameter to force a word
                 game.playerInput();
@@ -435,6 +473,7 @@
 
                 // set guessesRemaining game object var
                 this.guessesRemaining = guessesRemaining;
+
                 console.log("baseLength + additional: " + this.guessesRemaining);
                 console.log("------------] genGuessesRemaining() end ■ ]]");
             },
@@ -561,7 +600,9 @@
 
                 // set game object var to local var
                 game.guessesRemaining = guessesRemaining;
-                    
+                
+                game.guessesRemainingDisplay.innerHTML = game.guessesRemaining;
+
                 game.checkLose(game.guessesRemaining);
 
                 console.log("guessesLeft (lives left) is: " + game.guessesRemaining)
