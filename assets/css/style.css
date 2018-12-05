@@ -1,4 +1,5 @@
 body {
+    margin-top: -10px;
     background-color: rgb(192, 250, 106);
 }
 
@@ -43,7 +44,7 @@ p.smaller {
 
 
 div.content_containerLeft, #lettersGuessedDisplay {
-    width: 38%;
+    width: 32%;
     border: 4px inset maroon;
     float: left;
     text-align: center;
@@ -106,6 +107,22 @@ div.content_containerLeft {
     bottom: -23em;
     left: 4%;
     z-index: -4;
+}
+
+#decoration3 {
+    left: 10em;
+}
+
+#decoration4 {
+    left: 54em;
+}
+
+#decoration3, #decoration4 {
+    position: fixed;
+    bottom: -3.2em;
+
+    z-index: -15;
+    width: 27em;
 }
 
 #lettersGuessedDisplay {
