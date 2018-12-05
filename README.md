@@ -1,2 +1,3 @@
 # Word-Guess-Game
-Simple word-guessing game developed using JavaScript.
+
+Simple 8-ball themed word-guessing game utilizing html and css that is powered by JavaScript.
