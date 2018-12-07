@@ -116,7 +116,6 @@ var game = {
         var inputDisplay = game.inputDisplay;
         correctWord = game.correctWord[0];
 
-        var startingWord = correctWord;                                 // "8-ball" | "double hit"
         var displayFormatted = correctWord.replace(/[a-z0-9]/gi, "_");  // "_-____" | "______ ___"
         displayFormatted = displayFormatted.split('').join('&nbsp;');   // "_ - _ _ _ _"
         
@@ -135,7 +134,6 @@ var game = {
         var toDisplay = game.nowDisplaying;                         // pull whatever nowDisplaying is, manipulate it, then stuff it back inside
         var inputDisplay = game.inputDisplay;                       // variable to hold the div manipulations
         var lettersGuessed = game.lettersGuessed;                   // pull the string of guessed letters
-        var remainingLetters = game.remainingLetters;               // local var
         var guess = guess;                                          // given by function call
 
         // do not include: guess, lettersGuessed, space character; set global flag
@@ -309,7 +307,6 @@ var game = {
         });
 
         console.log("------------] genRemainingLetters() end ■ ]]");
-        console.log("Calling checkWin() ~>");                
     },
     
     // function for adding input to lettersGuessed string
@@ -317,34 +314,21 @@ var game = {
         console.log("[------------  [[ genLettersGuessed() start ► [[ ");
         
         // explicitly make sure lettersGuessed is a string equal to itself
-        var lettersGuessed;
-        var currentGuess;
-        var win = game.win;
-        var lose = game.lose;
+        var lettersGuessed = game.lettersGuessed;;
+        var currentGuess = game.currentGuess;
 
-        lettersGuessed = game.lettersGuessed; //.toString();
-        currentGuess = game.currentGuess;
-
-            // if lettersGuessed includes the valid currentGuess
+            // if lettersGuessed does not include the valid currentGuess
             if (!lettersGuessed.includes(currentGuess)) {
-                game.lettersGuessed += game.currentGuess;
-                
-                //this.lettersGuessedDisplay.innerHTML = lettersGuessed.toString();
-                
+                // add the currentGuess to the lettersGuessed string
+                lettersGuessed += currentGuess;
+                                
+                // set game object vars to local vars
+                game.lettersGuessed = lettersGuessed;
                 console.log("letters guessed so far: " + game.lettersGuessed);
                 console.log("Calling guessesLeft() ~> [from genLettersGuessed]");
                 game.guessesLeft();
             }
-            else if (!currentGuess === ''){
-                console.log({
-                lettersGuessed : lettersGuessed,
-                currentGuess : currentGuess,
-                win : win,
-                lose : lose
-            });
 
-            alert("You've already guessed that letter.");
-        }
         console.log("------------] genLettersGuessed() end ■ ]]");
     },
 
@@ -383,9 +367,9 @@ var game = {
         
         game.guessesRemainingDisplay.innerHTML = game.guessesRemaining;
 
+        console.log("guessesLeft (lives left) is: " + game.guessesRemaining)
         game.checkLose(game.guessesRemaining);
 
-        console.log("guessesLeft (lives left) is: " + game.guessesRemaining)
         console.log("------------] guessesLeft() end ■ ]]");
     },
 
@@ -397,8 +381,6 @@ var game = {
         var isValid = false;
         var code;
         var guess = game.currentGuess;
-        var wins = game.wins;
-        var losses = game.losses;
         
         // when detecting key input on page
         document.onkeyup = function(input_event){
@@ -407,7 +389,7 @@ var game = {
             
             // turn rawInput into charCode and check if valid
             code = rawInput.charCodeAt(0);
-            if ((!(code > 47 && code < 58) &&    // numeric (0-9)
+            if ((!(code > 47 && code < 58) &&   // numeric (0-9)
                 !(code > 64 && code < 91) &&    // upper alpha (A-Z)
                 !(code > 96 && code < 123))     // lower alpha (a-z)
                 || (rawInput.length != 1)) {    // or rawInput.length is too long
@@ -450,13 +432,6 @@ var game = {
                 code : code,
             });
         } // end onkeyup event 
-
-        // if wins or losses is greater than 1 reset the vars
-        if (wins > 0 || losses > 0) {
-                isValid = false;
-                code = 0;
-                guess = '';
-            }
 
         console.log( "playerInput() data:");
         console.log({
@@ -562,20 +537,15 @@ var game = {
     doRestart: function() {
         console.log("Game Restarting!");
 
-        game.win = false;
-        game.lose = false;
-
-
+        // play this sound every restart
         var audio = new Audio("./assets/sounds/pool_break.mp3");
         audio.play();
         game.initialize();
     },
 
     updateClock: function() {
-    var now = new Date(),
-    time = now.toLocaleTimeString();
-    
-    game.timeDisplay.innerHTML = new Date().toLocaleTimeString();
+    var now = new Date();
+    game.timeDisplay.innerHTML = now.toLocaleTimeString();
     setTimeout(game.updateClock, 1000);
     }
 }; // end gameObject
